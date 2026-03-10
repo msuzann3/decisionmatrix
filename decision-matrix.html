@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Should I Use AI? — Decision Matrix</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #1a2f4e;
+    --teal: #2a7f7f;
+    --teal-light: #e8f5f5;
+    --yellow: #f59e0b;
+    --yellow-light: #fffbeb;
+    --green: #16a34a;
+    --green-light: #f0fdf4;
+    --red: #dc2626;
+    --red-light: #fef2f2;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-400: #9ca3af;
+    --gray-600: #4b5563;
+    --gray-700: #374151;
+    --gray-800: #1f2937;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--gray-100);
+    color: var(--gray-800);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .app-header {
+    background: var(--navy);
+    color: white;
+    padding: 2rem 1.5rem 1.5rem;
+    text-align: center;
+  }
+  .app-header .eyebrow {
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 0.5rem;
+  }
+  .app-header h1 { font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 700; margin-bottom: 0.4rem; }
+  .app-header h1 span { color: #5eead4; }
+  .app-header .subtitle { font-size: 0.95rem; color: rgba(255,255,255,0.7); }
+
+  /* CONTAINER */
+  .container { max-width: 760px; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
+
+  /* CARDS */
+  .card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+  .card-title {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 1rem;
+  }
+  .section-intro {
+    font-size: 0.9rem;
+    color: var(--gray-600);
+    margin-bottom: 1.25rem;
+    line-height: 1.65;
+  }
+
+  /* FORM FIELDS */
+  label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--gray-600);
+    margin-bottom: 0.4rem;
+  }
+  input[type="text"], textarea {
+    width: 100%;
+    border: 1.5px solid var(--gray-200);
+    border-radius: 8px;
+    padding: 0.65rem 0.9rem;
+    font-size: 0.95rem;
+    font-family: inherit;
+    color: var(--gray-800);
+    transition: border-color 0.2s;
+    background: white;
+    resize: vertical;
+  }
+  input[type="text"]:focus, textarea:focus {
+    outline: none;
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px rgba(42,127,127,0.12);
+  }
+  textarea { min-height: 80px; }
+  .field + .field { margin-top: 1rem; }
+
+  /* SCORE BAR */
+  .score-bar-wrap {
+    background: var(--gray-100);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .score-label { font-size: 0.8rem; font-weight: 600; color: var(--gray-600); white-space: nowrap; }
+  .bar-track {
+    flex: 1;
+    min-width: 120px;
+    height: 10px;
+    background: var(--gray-200);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 0.4s ease, background 0.4s ease;
+    width: 0%;
+    background: var(--red);
+  }
+  .bar-fill.yellow { background: var(--yellow); }
+  .bar-fill.green  { background: var(--green); }
+
+  /* CRITERIA */
+  .criteria-list { display: flex; flex-direction: column; gap: 0.75rem; }
+  .criterion-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 0.9rem 1rem;
+    border: 1.5px solid var(--gray-200);
+    border-radius: 10px;
+    background: white;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .criterion-row.answered { border-color: var(--teal); background: var(--teal-light); }
+  .criterion-number {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--gray-400);
+    min-width: 1.5rem;
+    padding-top: 0.15rem;
+    text-align: right;
+  }
+  .criterion-body { flex: 1; }
+  .criterion-title { font-size: 0.95rem; font-weight: 600; color: var(--gray-800); margin-bottom: 0.2rem; }
+  .criterion-hint { font-size: 0.8rem; color: var(--gray-600); }
+  .criterion-input {
+    font-size: 0.95rem;
+    font-weight: 600;
+    border: none;
+    border-bottom: 1.5px solid var(--gray-200);
+    border-radius: 0;
+    padding: 0.15rem 0;
+    background: transparent;
+    color: var(--gray-800);
+    width: 100%;
+    margin-bottom: 0.2rem;
+  }
+  .criterion-input:focus { outline: none; border-bottom-color: var(--teal); box-shadow: none; }
+  .criterion-input::placeholder { color: var(--gray-400); font-weight: 400; }
+
+  /* YES/NO TOGGLES */
+  .toggle-group { display: flex; gap: 0.4rem; flex-shrink: 0; padding-top: 0.1rem; }
+  .toggle-btn {
+    padding: 0.3rem 0.75rem;
+    border-radius: 6px;
+    border: 1.5px solid var(--gray-200);
+    background: white;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--gray-600);
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .toggle-btn:hover { border-color: var(--teal); color: var(--teal); }
+  .toggle-btn.yes.active { background: var(--teal); border-color: var(--teal); color: white; }
+  .toggle-btn.no.active  { background: var(--gray-600); border-color: var(--gray-600); color: white; }
+
+  /* BUTTONS */
+  .btn-primary {
+    display: block;
+    width: 100%;
+    padding: 0.9rem;
+    background: var(--teal);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 1.25rem;
+    transition: background 0.2s, transform 0.1s, opacity 0.2s;
+    letter-spacing: 0.02em;
+  }
+  .btn-primary:not(:disabled):hover { background: #226868; }
+  .btn-primary:not(:disabled):active { transform: scale(0.99); }
+  .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
+
+  .action-row { display: flex; gap: 0.75rem; margin-top: 1.25rem; flex-wrap: wrap; }
+  .btn-secondary {
+    flex: 1;
+    min-width: 120px;
+    padding: 0.75rem;
+    border-radius: 10px;
+    border: 1.5px solid var(--gray-200);
+    background: white;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--gray-600);
+    transition: all 0.15s;
+    text-align: center;
+  }
+  .btn-secondary:hover { border-color: var(--teal); color: var(--teal); }
+
+  /* RESULTS (Step 2 output) */
+  #results { display: none; }
+  #results.visible { display: block; }
+
+  .result-banner {
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  .result-banner.red    { background: var(--red-light);    border: 2px solid #fca5a5; }
+  .result-banner.yellow { background: var(--yellow-light); border: 2px solid #fcd34d; }
+  .result-banner.green  { background: var(--green-light);  border: 2px solid #86efac; }
+  .result-emoji { font-size: 2.5rem; margin-bottom: 0.5rem; }
+  .result-score-display {
+    font-size: 0.8rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--gray-600); margin-bottom: 0.3rem;
+  }
+  .result-headline { font-size: 1.25rem; font-weight: 800; color: var(--gray-800); margin-bottom: 0.5rem; }
+  .result-body { font-size: 0.9rem; color: var(--gray-600); }
+
+  .result-context {
+    background: white;
+    border-radius: 10px;
+    border: 1.5px solid var(--gray-200);
+    padding: 1rem 1.25rem;
+    margin-bottom: 1rem;
+    font-size: 0.88rem;
+    color: var(--gray-600);
+  }
+  .result-context strong { color: var(--gray-800); }
+
+  .next-steps-title {
+    font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.1em; color: var(--teal); margin-bottom: 0.75rem;
+  }
+  .next-steps-list { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
+  .next-steps-list li { display: flex; gap: 0.6rem; font-size: 0.9rem; color: var(--gray-700); align-items: flex-start; }
+  .next-steps-list li::before { content: "→"; color: var(--teal); font-weight: 700; flex-shrink: 0; }
+
+  /* STEP DIVIDER */
+  .step-divider {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0.5rem 0 1.25rem;
+    color: var(--gray-400);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .step-divider::before, .step-divider::after { content: ''; flex: 1; height: 1px; background: var(--gray-200); }
+
+  /* STEP 3 — AUTOMATION EXPLORER */
+  #automationSection { display: none; }
+  #automationSection.visible { display: block; }
+
+  .question-block { margin-bottom: 1.5rem; }
+  .question-block:last-of-type { margin-bottom: 0; }
+  .question-label {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--gray-800);
+    margin-bottom: 0.65rem;
+  }
+  .question-num {
+    display: inline-block;
+    width: 1.4rem;
+    height: 1.4rem;
+    background: var(--teal);
+    color: white;
+    border-radius: 50%;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-align: center;
+    line-height: 1.4rem;
+    margin-right: 0.4rem;
+    flex-shrink: 0;
+  }
+
+  .option-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 0.5rem;
+  }
+  .option-card {
+    border: 1.5px solid var(--gray-200);
+    border-radius: 9px;
+    padding: 0.7rem 0.9rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: white;
+    user-select: none;
+  }
+  .option-card:hover { border-color: var(--teal); }
+  .option-card.selected { border-color: var(--teal); background: var(--teal-light); box-shadow: 0 0 0 2px rgba(42,127,127,0.18); }
+  .option-card-icon { font-size: 1.15rem; margin-bottom: 0.25rem; }
+  .option-card-label { font-size: 0.82rem; font-weight: 700; color: var(--gray-800); }
+  .option-card-sub { font-size: 0.74rem; color: var(--gray-400); margin-top: 0.1rem; }
+
+  /* LLM grid — 3 col on wider screens */
+  .llm-option-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+  }
+  @media (max-width: 480px) { .llm-option-grid { grid-template-columns: repeat(2, 1fr); } }
+
+  /* RECOMMENDATION CARDS */
+  #recOutput { display: none; }
+  #recOutput.visible { display: block; }
+
+  .rec-card {
+    border: 1.5px solid var(--gray-200);
+    border-radius: 10px;
+    padding: 1.1rem 1.2rem;
+    margin-bottom: 0.9rem;
+    background: white;
+    position: relative;
+  }
+  .rec-card:last-child { margin-bottom: 0; }
+  .rec-badge {
+    display: inline-block;
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.55rem;
+    border-radius: 99px;
+    margin-bottom: 0.5rem;
+  }
+  .rec-badge.primary   { background: #dbeafe; color: #1d4ed8; }
+  .rec-badge.secondary { background: #ede9fe; color: #6d28d9; }
+  .rec-badge.tertiary  { background: #fce7f3; color: #9d174d; }
+  .rec-title { font-size: 1rem; font-weight: 800; color: var(--navy); margin-bottom: 0.35rem; }
+  .rec-desc  { font-size: 0.875rem; color: var(--gray-600); margin-bottom: 0.85rem; line-height: 1.6; }
+  .rec-how-label {
+    font-size: 0.68rem; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.1em; color: var(--teal); margin-bottom: 0.4rem;
+  }
+  .rec-steps { list-style: none; display: flex; flex-direction: column; gap: 0.4rem; }
+  .rec-steps li {
+    font-size: 0.85rem;
+    color: var(--gray-700);
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-start;
+    line-height: 1.5;
+  }
+  .rec-step-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.2rem;
+    height: 1.2rem;
+    min-width: 1.2rem;
+    border-radius: 50%;
+    background: var(--gray-100);
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: var(--gray-600);
+    margin-top: 0.1rem;
+  }
+  .rec-impact {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--green);
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--gray-100);
+  }
+
+  /* FOOTER */
+  .app-footer { text-align: center; font-size: 0.75rem; color: var(--gray-400); margin-top: 2rem; padding-bottom: 1rem; }
+
+  /* PRINT */
+  @media print {
+    body { background: white; }
+    .app-header { background: var(--navy) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .toggle-btn, .btn-primary, .btn-secondary, .action-row,
+    #automationSection .question-block, #automationSection .btn-primary { display: none !important; }
+    #results { display: block !important; }
+    #recOutput { display: block !important; }
+    .result-banner { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .card { box-shadow: none; border: 1px solid var(--gray-200); }
+    .score-bar-wrap { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <p class="eyebrow">Elevating AI Prompting for Results</p>
+  <h1>Should I Use <span>AI?</span></h1>
+  <p class="subtitle">A scored decision matrix to evaluate AI fit for any process</p>
+</header>
+
+<div class="container">
+
+  <!-- ══════════════════════════════════
+       STEP 1 — PROCESS IDENTIFICATION
+  ══════════════════════════════════ -->
+  <div class="card">
+    <p class="card-title">Step 1 — Identify Your Process</p>
+    <div class="field">
+      <label for="processName">Process Name</label>
+      <input type="text" id="processName" placeholder="e.g., Onboarding email sequence, Invoice approval, Training content creation" />
+    </div>
+    <div class="field">
+      <label for="frictionPoint">Where is the friction point?</label>
+      <textarea id="frictionPoint" placeholder="Describe where this process breaks down, slows down, or causes pain. What's the bottleneck or frustration?"></textarea>
+    </div>
+  </div>
+
+  <!-- LIVE SCORE BAR -->
+  <div class="score-bar-wrap">
+    <span class="score-label">Current Score</span>
+    <span id="scoreDisplay" style="font-size:1.4rem;font-weight:800;color:var(--navy);white-space:nowrap">0 / <span id="maxScore">9</span></span>
+    <div class="bar-track">
+      <div class="bar-fill" id="barFill"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       STEP 2 — SCORE EACH CRITERION
+  ══════════════════════════════════ -->
+  <div class="card">
+    <p class="card-title">Step 2 — Score Each Criterion &nbsp;·&nbsp; 1 = Yes &nbsp;·&nbsp; 0 = No</p>
+    <div class="criteria-list" id="criteriaList">
+
+      <div class="criterion-row" data-index="0">
+        <span class="criterion-number">1</span>
+        <div class="criterion-body">
+          <div class="criterion-title">Task is repetitive or time-consuming</div>
+          <div class="criterion-hint">The same steps happen over and over, or it eats up significant time each occurrence</div>
+        </div>
+        <div class="toggle-group">
+          <button class="toggle-btn yes" onclick="score(0, 1, this)">Yes</button>
+          <button class="toggle-btn no"  onclick="score(0, 0, this)">No</button>
+        </div>
+      </div>
+
+      <div class="criterion-row" data-index="1">
+        <span class="criterion-number">2</span>
+        <div class="criterion-body">
+          <div class="criterion-title">Involves data analysis</div>
+          <div class="criterion-hint">The process requires sorting, summarizing, finding patterns, or interpreting information</div>
+        </div>
+        <div class="toggle-group">
+          <button class="toggle-btn yes" onclick="score(1, 1, this)">Yes</button>
+          <button class="toggle-btn no"  onclick="score(1, 0, this)">No</button>
+        </div>
+      </div>
+
+      <div class="criterion-row" data-index="2">
+        <span class="criterion-number">3</span>
+        <div class="criterion-body">
+          <div class="criterion-title">Personalization is beneficial</div>
+          <div class="criterion-hint">Tailoring the output to individual users, contexts, or preferences would add value</div>
+        </div>
+        <div class="toggle-group">
+          <button class="toggle-btn yes" onclick="score(2, 1, this)">Yes</button>
+          <button class="toggle-btn no"  onclick="score(2, 0, this)">No</button>
+        </div>
+      </div>
+
+      <div class="criterion-row" data-index="3">
+        <span class="criterion-number">4</span>
+        <div class="criterion-body">
+          <div class="criterion-title">Needs rapid prototyping</div>
+          <div class="criterion-hint">Speed of iteration matters — getting to a draft or first version quickly has real value</div>
+        </div>
+        <div class="toggle-group">
+          <button class="toggle-btn yes" onclick="score(3, 1, this)">Yes</button>
+          <button class="toggle-btn no"  onclick="score(3, 0, this)">No</button>
+        </div>
+      </div>
+
+      <div class="criterion-row" data-index="4">
+        <span class="criterion-number">5</span>
+        <div class="criterion-body">
+          <div class="criterion-title">Existing tools are insufficient</div>
+          <div class="criterion-hint">Current software, templates, or workflows aren't solving the problem adequately</div>
+        </div>
+        <div class="toggle-group">
+          <button class="toggle-btn yes" onclick="score(4, 1, this)">Yes</button>
+          <button class="toggle-btn no"  onclick="score(4, 0, this)">No</button>
+        </div>
+      </div>
+
+      <div class="criterion-row" data-index="5">
+        <span class="criterion-number">6</span>
+        <div class="criterion-body">
+          <div class="criterion-title">AI enhances the learner or user experience</div>
+          <div class="criterion-hint">Using AI here would meaningfully improve the experience for the people this process serves</div>
+        </div>
+        <div class="toggle-group">
+          <button class="toggle-btn yes" onclick="score(5, 1, this)">Yes</button>
+          <button class="toggle-btn no"  onclick="score(5, 0, this)">No</button>
+        </div>
+      </div>
+
+      <div class="criterion-row" data-index="6">
+        <span class="criterion-number">7</span>
+        <div class="criterion-body">
+          <div class="criterion-title">Ethical considerations are addressed</div>
+          <div class="criterion-hint">Privacy, bias, accuracy, and accountability concerns have been identified and can be managed</div>
+        </div>
+        <div class="toggle-group">
+          <button class="toggle-btn yes" onclick="score(6, 1, this)">Yes</button>
+          <button class="toggle-btn no"  onclick="score(6, 0, this)">No</button>
+        </div>
+      </div>
+
+      <div class="criterion-row" data-index="7">
+        <span class="criterion-number">8</span>
+        <div class="criterion-body">
+          <div class="criterion-title">Does NOT require specialized human judgment</div>
+          <div class="criterion-hint">The task is more rule-based or pattern-driven than dependent on deep expertise or intuition</div>
+        </div>
+        <div class="toggle-group">
+          <button class="toggle-btn yes" onclick="score(7, 1, this)">Yes</button>
+          <button class="toggle-btn no"  onclick="score(7, 0, this)">No</button>
+        </div>
+      </div>
+
+      <!-- CUSTOM CRITERIA -->
+      <div class="criterion-row" data-index="8" id="custom-row-0">
+        <span class="criterion-number">9</span>
+        <div class="criterion-body">
+          <input type="text" class="criterion-input" id="custom-label-0"
+            placeholder="Add your own criterion (optional)…"
+            oninput="updateCustomLabel(0)" />
+          <div class="criterion-hint">Type a criterion specific to your process or organization</div>
+        </div>
+        <div class="toggle-group">
+          <button class="toggle-btn yes" onclick="score(8, 1, this)" disabled>Yes</button>
+          <button class="toggle-btn no"  onclick="score(8, 0, this)" disabled>No</button>
+        </div>
+      </div>
+
+      <div class="criterion-row" data-index="9" id="custom-row-1">
+        <span class="criterion-number">10</span>
+        <div class="criterion-body">
+          <input type="text" class="criterion-input" id="custom-label-1"
+            placeholder="Add your own criterion (optional)…"
+            oninput="updateCustomLabel(1)" />
+          <div class="criterion-hint">Type a criterion specific to your process or organization</div>
+        </div>
+        <div class="toggle-group">
+          <button class="toggle-btn yes" onclick="score(9, 1, this)" disabled>Yes</button>
+          <button class="toggle-btn no"  onclick="score(9, 0, this)" disabled>No</button>
+        </div>
+      </div>
+
+    </div>
+    <button class="btn-primary" onclick="showResults()">See My Results →</button>
+  </div>
+
+  <!-- ══════════════════════════════════
+       STEP 2 RESULTS
+  ══════════════════════════════════ -->
+  <div id="results">
+
+    <div id="resultBanner" class="result-banner">
+      <div class="result-emoji" id="resultEmoji"></div>
+      <div class="result-score-display" id="resultScoreDisplay"></div>
+      <div class="result-headline" id="resultHeadline"></div>
+      <div class="result-body" id="resultBody"></div>
+    </div>
+
+    <div class="result-context" id="resultContext"></div>
+
+    <div class="card">
+      <p class="next-steps-title">What to explore next</p>
+      <ul class="next-steps-list" id="nextStepsList"></ul>
+    </div>
+
+    <!-- Action row only shown when score < 4 (no Step 3) -->
+    <div class="action-row" id="resultsActionRow">
+      <button class="btn-secondary" onclick="window.print()">Print / Save as PDF</button>
+      <button class="btn-secondary" onclick="resetAll()">Start Over</button>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════
+       STEP 3 — AUTOMATION EXPLORER
+       Shown only when score >= 4
+  ══════════════════════════════════ -->
+  <div id="automationSection">
+    <div class="step-divider">Step 3 — Find the Right Automation</div>
+
+    <div class="card">
+      <p class="card-title">Tell Us a Bit More</p>
+      <p class="section-intro">Answer four quick questions and we'll recommend specific automation approaches — matched to your process, your situation, and the AI tool you're using.</p>
+
+      <!-- Q1: What the process involves -->
+      <div class="question-block">
+        <p class="question-label"><span class="question-num">1</span> What best describes what this process involves?</p>
+        <div class="option-grid" id="q1grid">
+          <div class="option-card" onclick="selectOption(1,'content',this)">
+            <div class="option-card-icon">✍️</div>
+            <div class="option-card-label">Creating content</div>
+            <div class="option-card-sub">Drafts, reports, emails, training materials</div>
+          </div>
+          <div class="option-card" onclick="selectOption(1,'data',this)">
+            <div class="option-card-icon">📊</div>
+            <div class="option-card-label">Analyzing data</div>
+            <div class="option-card-sub">Sorting, summarizing, finding patterns</div>
+          </div>
+          <div class="option-card" onclick="selectOption(1,'communication',this)">
+            <div class="option-card-icon">💬</div>
+            <div class="option-card-label">Communicating</div>
+            <div class="option-card-sub">Sending the same info repeatedly</div>
+          </div>
+          <div class="option-card" onclick="selectOption(1,'review',this)">
+            <div class="option-card-icon">✅</div>
+            <div class="option-card-label">Reviewing / deciding</div>
+            <div class="option-card-sub">Approvals, evaluations, decisions</div>
+          </div>
+          <div class="option-card" onclick="selectOption(1,'gathering',this)">
+            <div class="option-card-icon">🗂️</div>
+            <div class="option-card-label">Gathering info</div>
+            <div class="option-card-sub">Collecting from multiple sources</div>
+          </div>
+          <div class="option-card" onclick="selectOption(1,'other',this)">
+            <div class="option-card-icon">🔧</div>
+            <div class="option-card-label">Something else</div>
+            <div class="option-card-sub">A mix, or a different type</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q2: Where it happens -->
+      <div class="question-block">
+        <p class="question-label"><span class="question-num">2</span> Where does most of this process happen today?</p>
+        <div class="option-grid" id="q2grid">
+          <div class="option-card" onclick="selectOption(2,'email',this)">
+            <div class="option-card-icon">📧</div>
+            <div class="option-card-label">Email</div>
+            <div class="option-card-sub">Outlook or Gmail</div>
+          </div>
+          <div class="option-card" onclick="selectOption(2,'spreadsheets',this)">
+            <div class="option-card-icon">📈</div>
+            <div class="option-card-label">Spreadsheets</div>
+            <div class="option-card-sub">Excel or Google Sheets</div>
+          </div>
+          <div class="option-card" onclick="selectOption(2,'docs',this)">
+            <div class="option-card-icon">📄</div>
+            <div class="option-card-label">Documents</div>
+            <div class="option-card-sub">Word, Google Docs, or similar</div>
+          </div>
+          <div class="option-card" onclick="selectOption(2,'app',this)">
+            <div class="option-card-icon">🖥️</div>
+            <div class="option-card-label">A specific app</div>
+            <div class="option-card-sub">LMS, CRM, HRIS, etc.</div>
+          </div>
+          <div class="option-card" onclick="selectOption(2,'meetings',this)">
+            <div class="option-card-icon">🗣️</div>
+            <div class="option-card-label">Meetings / verbal</div>
+            <div class="option-card-sub">In-person or video calls</div>
+          </div>
+          <div class="option-card" onclick="selectOption(2,'mixed',this)">
+            <div class="option-card-icon">🔀</div>
+            <div class="option-card-label">Multiple places</div>
+            <div class="option-card-sub">No single tool or system</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q3: Biggest pain -->
+      <div class="question-block">
+        <p class="question-label"><span class="question-num">3</span> What's the biggest pain point right now?</p>
+        <div class="option-grid" id="q3grid">
+          <div class="option-card" onclick="selectOption(3,'speed',this)">
+            <div class="option-card-icon">⏱️</div>
+            <div class="option-card-label">It takes too long</div>
+            <div class="option-card-sub">Too much time per occurrence</div>
+          </div>
+          <div class="option-card" onclick="selectOption(3,'consistency',this)">
+            <div class="option-card-icon">🎯</div>
+            <div class="option-card-label">Inconsistent results</div>
+            <div class="option-card-sub">Output varies too much</div>
+          </div>
+          <div class="option-card" onclick="selectOption(3,'scale',this)">
+            <div class="option-card-icon">📦</div>
+            <div class="option-card-label">Doesn't scale</div>
+            <div class="option-card-sub">More volume = more problems</div>
+          </div>
+          <div class="option-card" onclick="selectOption(3,'quality',this)">
+            <div class="option-card-icon">⭐</div>
+            <div class="option-card-label">Quality gaps</div>
+            <div class="option-card-sub">Output isn't where it needs to be</div>
+          </div>
+          <div class="option-card" onclick="selectOption(3,'knowledge',this)">
+            <div class="option-card-icon">🧠</div>
+            <div class="option-card-label">Requires too much expertise</div>
+            <div class="option-card-sub">Only certain people can do it</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q4: LLM -->
+      <div class="question-block">
+        <p class="question-label"><span class="question-num">4</span> Which AI tool are you working with?</p>
+        <div class="llm-option-grid" id="q4grid">
+          <div class="option-card" onclick="selectOption(4,'chatgpt',this)">
+            <div class="option-card-icon">🤖</div>
+            <div class="option-card-label">ChatGPT</div>
+            <div class="option-card-sub">OpenAI</div>
+          </div>
+          <div class="option-card" onclick="selectOption(4,'claude',this)">
+            <div class="option-card-icon">⚡</div>
+            <div class="option-card-label">Claude</div>
+            <div class="option-card-sub">Anthropic</div>
+          </div>
+          <div class="option-card" onclick="selectOption(4,'gemini',this)">
+            <div class="option-card-icon">💎</div>
+            <div class="option-card-label">Gemini</div>
+            <div class="option-card-sub">Google</div>
+          </div>
+          <div class="option-card" onclick="selectOption(4,'copilot',this)">
+            <div class="option-card-icon">🪟</div>
+            <div class="option-card-label">Copilot</div>
+            <div class="option-card-sub">Microsoft</div>
+          </div>
+          <div class="option-card" onclick="selectOption(4,'perplexity',this)">
+            <div class="option-card-icon">🔍</div>
+            <div class="option-card-label">Perplexity</div>
+            <div class="option-card-sub">Perplexity AI</div>
+          </div>
+          <div class="option-card" onclick="selectOption(4,'other',this)">
+            <div class="option-card-icon">✨</div>
+            <div class="option-card-label">Other / Unsure</div>
+            <div class="option-card-sub">Or exploring options</div>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-primary" id="generateBtn" onclick="generateRecommendations()" disabled>
+        Get My Automation Recommendations →
+      </button>
+    </div>
+
+    <!-- ══════════════════════════════════
+         RECOMMENDATION OUTPUT
+    ══════════════════════════════════ -->
+    <div id="recOutput">
+      <div class="card">
+        <p class="card-title">Automation Recommendations</p>
+        <p class="section-intro" id="recIntro"></p>
+        <div id="recList"></div>
+      </div>
+
+      <div class="action-row">
+        <button class="btn-secondary" onclick="window.print()">Print / Save as PDF</button>
+        <button class="btn-secondary" onclick="resetAll()">Start Over</button>
+      </div>
+    </div>
+
+  </div><!-- /automationSection -->
+
+  <p class="app-footer">
+    Based on the Decision Matrix worksheet by Michelle Lentz &mdash; Elevating AI Prompting for Results
+  </p>
+
+</div><!-- /container -->
+
+<script>
+// ─── STATE ───────────────────────────────────────────────────────────────────
+const scores      = new Array(10).fill(null);
+const customActive = [false, false];
+const q = { 1: null, 2: null, 3: null, 4: null }; // Step 3 answers
+
+// ─── STEP 2: SCORING ─────────────────────────────────────────────────────────
+function updateCustomLabel(idx) {
+  const input = document.getElementById('custom-label-' + idx);
+  const row   = document.getElementById('custom-row-' + idx);
+  const btns  = row.querySelectorAll('.toggle-btn');
+  const has   = input.value.trim().length > 0;
+  if (has === customActive[idx]) return;
+  customActive[idx] = has;
+  btns.forEach(b => b.disabled = !has);
+  if (!has) {
+    scores[8 + idx] = null;
+    row.classList.remove('answered');
+    btns.forEach(b => b.classList.remove('active'));
+  }
+  updateScoreBar();
+}
+
+function getMax() { return 8 + customActive.filter(Boolean).length; }
+
+function getTotal() {
+  let t = 0;
+  for (let i = 0; i < 8; i++) if (scores[i] === 1) t++;
+  for (let i = 0; i < 2; i++) if (customActive[i] && scores[8+i] === 1) t++;
+  return t;
+}
+
+function score(index, value, btn) {
+  scores[index] = value;
+  btn.closest('.criterion-row').classList.add('answered');
+  btn.closest('.toggle-group').querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  updateScoreBar();
+}
+
+function updateScoreBar() {
+  const total = getTotal(), max = getMax();
+  const pct   = max > 0 ? (total / max) * 100 : 0;
+  const fill  = document.getElementById('barFill');
+  fill.style.width = pct + '%';
+  fill.className   = 'bar-fill' + (pct >= 78 ? ' green' : pct >= 44 ? ' yellow' : '');
+  document.getElementById('scoreDisplay').innerHTML =
+    total + ' / <span id="maxScore">' + max + '</span>';
+}
+
+function showResults() {
+  const total = getTotal(), max = getMax();
+  const pname = document.getElementById('processName').value.trim();
+  const fpt   = document.getElementById('frictionPoint').value.trim();
+  let band, emoji, headline, body, nextSteps;
+
+  if (total <= 3) {
+    band = 'red'; emoji = '🛑';
+    headline = 'Manual intervention is the better choice right now';
+    body = 'Based on your score, this process relies heavily on human judgment, lacks the data foundation, or isn\'t repeated enough to justify AI. Automating it prematurely could introduce risk without meaningful gain.';
+    nextSteps = [
+      'Document the current manual process clearly — this is the foundation before any future automation.',
+      'Identify which specific criteria scored No. Addressing those gaps can open the door to AI later.',
+      'Consider lightweight improvements first: templates, checklists, or simpler workflow tools.',
+    ];
+  } else if (total <= 6) {
+    band = 'yellow'; emoji = '🟡';
+    headline = 'A human + AI approach could work well here';
+    body = 'Your score suggests AI could play a supporting role, but shouldn\'t operate independently. A hybrid approach — where AI handles drafts, analysis, or suggestions and a human reviews and decides — is likely the right fit.';
+    nextSteps = [
+      'Identify which specific steps AI could handle vs. which steps need human review.',
+      'Pilot with a low-stakes version of this process before scaling.',
+      'Revisit the criteria that scored No; they point to guardrails you\'ll need to build in.',
+    ];
+  } else {
+    band = 'green'; emoji = '✅';
+    headline = 'AI is a strong fit for this process';
+    body = 'Your score indicates this process is a solid candidate for AI. It\'s repetitive or data-driven, existing tools aren\'t cutting it, and the conditions for responsible use are in place.';
+    nextSteps = [
+      'Define success metrics before you build: what does "better" look like for this process?',
+      'Choose the right type of AI for the job — generative AI for content, ML for prediction, RPA for rule-based steps.',
+      'Plan for human oversight even in high-scoring processes. Build in review checkpoints.',
+    ];
+  }
+
+  const banner = document.getElementById('resultBanner');
+  banner.className = 'result-banner ' + band;
+  document.getElementById('resultEmoji').textContent        = emoji;
+  document.getElementById('resultScoreDisplay').textContent = 'Score: ' + total + ' out of ' + max;
+  document.getElementById('resultHeadline').textContent     = headline;
+  document.getElementById('resultBody').textContent         = body;
+
+  const ctx = document.getElementById('resultContext');
+  if (pname || fpt) {
+    ctx.style.display = '';
+    ctx.innerHTML =
+      (pname ? '<div><strong>Process:</strong> ' + esc(pname) + '</div>' : '') +
+      (fpt   ? '<div style="margin-top:0.4rem"><strong>Friction point:</strong> ' + esc(fpt) + '</div>' : '');
+  } else {
+    ctx.style.display = 'none';
+  }
+
+  document.getElementById('nextStepsList').innerHTML =
+    nextSteps.map(s => '<li>' + esc(s) + '</li>').join('');
+
+  const resultsEl = document.getElementById('results');
+  resultsEl.style.display = 'block';
+  resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  // Show Step 3 if score qualifies, hide otherwise
+  const auto = document.getElementById('automationSection');
+  const actRow = document.getElementById('resultsActionRow');
+  if (total >= 4) {
+    auto.style.display = 'block';
+    actRow.style.display = 'none'; // action buttons live in Step 3 instead
+  } else {
+    auto.style.display = 'none';
+    actRow.style.display = 'flex';
+  }
+}
+
+// ─── STEP 3: QUESTION SELECTION ──────────────────────────────────────────────
+function selectOption(question, value, card) {
+  q[question] = value;
+  document.getElementById('q' + question + 'grid')
+    .querySelectorAll('.option-card')
+    .forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  checkGenerateReady();
+}
+
+function checkGenerateReady() {
+  const ready = q[1] && q[2] && q[3] && q[4];
+  document.getElementById('generateBtn').disabled = !ready;
+}
+
+// ─── STEP 3: RECOMMENDATION ENGINE ───────────────────────────────────────────
+function generateRecommendations() {
+  const pname = document.getElementById('processName').value.trim() || 'your process';
+  const fpt   = document.getElementById('frictionPoint').value.trim();
+  const total = getTotal();
+  const band  = total <= 6 ? 'mid' : 'high';
+
+  const recs = buildRecommendations(q[1], q[2], q[3], q[4], band);
+
+  const badgeClasses = ['primary', 'secondary', 'tertiary'];
+  const badgeLabels  = ['Top Recommendation', 'Also Consider', 'Worth Exploring'];
+
+  document.getElementById('recIntro').textContent =
+    'Based on your answers, here are the automation approaches most likely to solve the friction in "' + pname + '"' +
+    (fpt ? ' — specifically: ' + fpt.charAt(0).toLowerCase() + fpt.slice(1) + '.' : '.');
+
+  document.getElementById('recList').innerHTML = recs.map((r, i) => `
+    <div class="rec-card">
+      <span class="rec-badge ${badgeClasses[i]}">${badgeLabels[i]}</span>
+      <div class="rec-title">${esc(r.title)}</div>
+      <div class="rec-desc">${esc(r.desc)}</div>
+      <div class="rec-how-label">How to implement with ${llmName(q[4])}</div>
+      <ul class="rec-steps">
+        ${r.steps.map(s => `<li><span class="rec-step-num">${r.steps.indexOf(s)+1}</span>${esc(s)}</li>`).join('')}
+      </ul>
+      <div class="rec-impact">✓ Expected impact: ${esc(r.impact)}</div>
+    </div>
+  `).join('');
+
+  const out = document.getElementById('recOutput');
+  out.style.display = 'block';
+  out.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function llmName(id) {
+  return { chatgpt:'ChatGPT', claude:'Claude', gemini:'Gemini',
+           copilot:'Microsoft Copilot', perplexity:'Perplexity', other:'your AI tool' }[id] || 'your AI tool';
+}
+
+// ─── STRATEGY LIBRARY ────────────────────────────────────────────────────────
+// Each strategy scores itself based on answers, top 3 are selected.
+
+const STRATEGIES = [
+
+  // ── DRAFT & REFINE ──────────────────────────────────────────────────────────
+  {
+    id: 'draft_refine',
+    title: 'AI-Assisted Drafting with Human Review',
+    desc: 'Use AI to generate first drafts — emails, documents, training content, responses — that a human then reviews, personalizes, and approves. This keeps quality high while cutting creation time dramatically.',
+    impact: 'Faster first drafts, consistent starting point, humans stay in control',
+    fit: (p, t, pain) =>
+      (['content','communication'].includes(p) ? 3 : 0) +
+      (['speed','quality'].includes(pain) ? 2 : 0) +
+      (['docs','email'].includes(t) ? 1 : 0),
+    llmSteps: {
+      chatgpt: [
+        'Open ChatGPT and describe what you need: include the purpose, audience, tone, and any required details.',
+        'Ask it to produce a complete first draft. Review and make targeted edits — don\'t start from scratch.',
+        'Build a reusable prompt template your team saves and reuses each time this task comes up.',
+        'For recurring needs, consider a Custom GPT preloaded with your brand voice and required format.',
+      ],
+      claude: [
+        'Create a Claude Project and upload your style guide, examples, and any standing instructions.',
+        'Each time you need a draft, open the project and ask Claude — it will apply your saved context automatically.',
+        'Use Claude\'s longer context window to include more examples and constraints for better output.',
+        'Establish a review habit: Claude drafts, you refine, then finalize. Don\'t skip the human review step.',
+      ],
+      gemini: [
+        'In Google Docs, click the Gemini icon (Help me write) and describe what you need.',
+        'In Gmail, use Gemini to draft emails — it can pull context from your thread automatically.',
+        'Create a Google Doc template with instructions at the top that Gemini can follow each time.',
+        'Use Gemini in Google Slides to generate presentation drafts from an outline or bullet points.',
+      ],
+      copilot: [
+        'In Word, click the Copilot icon and select "Draft with Copilot" — describe what you need.',
+        'In Outlook, use Copilot to draft emails. Save your best-performing prompts as Quick Steps for reuse.',
+        'In Teams, use Copilot to draft meeting summaries or follow-up messages immediately after calls.',
+        'Build a Word template with Copilot instructions embedded so any team member gets consistent results.',
+      ],
+      perplexity: [
+        'Use Perplexity to research best-practice examples of this type of content before drafting.',
+        'Ask Perplexity to synthesize multiple sources into an outline or key points your team can draft from.',
+        'For content that requires current information, Perplexity\'s web-connected search keeps drafts accurate.',
+        'Pair Perplexity research with another AI tool to turn findings into polished final content.',
+      ],
+      other: [
+        'Write a clear, reusable prompt that specifies: purpose, audience, tone, length, and format.',
+        'Ask your AI tool to generate a complete first draft rather than writing from scratch.',
+        'Review the draft: check for accuracy, add specifics only you know, and adjust the voice.',
+        'Save the prompt as a template your team can reuse every time this type of content is needed.',
+      ],
+    },
+  },
+
+  // ── ANALYZE & SUMMARIZE ──────────────────────────────────────────────────────
+  {
+    id: 'analyze_summarize',
+    title: 'AI-Powered Analysis & Summarization',
+    desc: 'Use AI to process large amounts of information — feedback, reports, data sets, notes — and surface the key patterns, themes, and action items. Humans make decisions based on AI-distilled insights.',
+    impact: 'Hours of analysis compressed into minutes, no important signals missed',
+    fit: (p, t, pain) =>
+      (['data','gathering','review'].includes(p) ? 3 : 0) +
+      (['scale','speed'].includes(pain) ? 2 : 0) +
+      (['spreadsheets','docs','mixed'].includes(t) ? 1 : 0),
+    llmSteps: {
+      chatgpt: [
+        'Paste your data, feedback, or document into ChatGPT and describe what you\'re looking for.',
+        'Ask for a structured output: "Summarize the top 5 themes, list action items, flag any risks."',
+        'For recurring analysis, build a Custom GPT with your analysis criteria pre-loaded.',
+        'Use the Advanced Data Analysis feature (Code Interpreter) for structured data files like CSV exports.',
+      ],
+      claude: [
+        'Claude handles very long documents well — paste entire reports, surveys, or datasets in a single session.',
+        'Ask Claude to identify themes, extract key points, and flag anomalies in a structured format.',
+        'Use a Claude Project to run this analysis consistently across different data over time.',
+        'Request output in a specific format (table, bullet list, executive summary) so it\'s immediately usable.',
+      ],
+      gemini: [
+        'In Google Sheets, select a data range and ask Gemini to summarize trends or create a pivot-style analysis.',
+        'In Google Docs, upload a report and ask Gemini to extract key findings and recommended actions.',
+        'Use NotebookLM (Google\'s AI research tool) to synthesize across multiple uploaded documents at once.',
+        'Connect Gemini to Google Forms responses to auto-summarize feedback as it comes in.',
+      ],
+      copilot: [
+        'In Excel, highlight your data and ask Copilot to summarize trends, generate charts, or identify outliers.',
+        'In Word, ask Copilot to extract key points from a long document and create a structured summary.',
+        'In Teams meeting transcripts, use Copilot to pull out action items, decisions, and follow-ups.',
+        'Use Copilot in Power BI to generate natural-language summaries of your data dashboards.',
+      ],
+      perplexity: [
+        'Paste your content or data into Perplexity and ask for a structured analysis with sources cited.',
+        'Use Perplexity to research how similar organizations analyze this type of information.',
+        'Ask Perplexity to compare multiple items or sources and surface the most important differences.',
+        'Combine Perplexity\'s research with your own internal data for a more complete analysis.',
+      ],
+      other: [
+        'Paste your data or content and ask: "Identify the top themes, list action items, and flag anything surprising."',
+        'Request output in a specific format — table, bullets, ranked list — so it\'s immediately usable.',
+        'For large volumes, break the content into chunks and ask the AI to analyze each, then synthesize.',
+        'Always have a human review the AI\'s analysis before acting on it, especially for high-stakes decisions.',
+      ],
+    },
+  },
+
+  // ── STANDARDIZED TEMPLATE SYSTEM ─────────────────────────────────────────────
+  {
+    id: 'template_system',
+    title: 'AI-Powered Standardization & Templates',
+    desc: 'Use AI to apply consistent structure, language, and quality standards across every instance of this process — eliminating variation caused by different people doing things differently.',
+    impact: 'Consistent quality regardless of who does the work, reduced errors',
+    fit: (p, t, pain) =>
+      (['consistency','knowledge'].includes(pain) ? 3 : 0) +
+      (['content','communication','review'].includes(p) ? 2 : 0) +
+      (t === 'mixed' ? 1 : 0),
+    llmSteps: {
+      chatgpt: [
+        'Build a Custom GPT with your quality standards, required format, and examples of ideal output baked in.',
+        'Any team member opens the Custom GPT and gets consistent output — no institutional knowledge required.',
+        'Use the GPT to check existing work against your standards: "Review this against our format guidelines."',
+        'Update the Custom GPT\'s instructions whenever your standards evolve — one update, everyone benefits.',
+      ],
+      claude: [
+        'Create a Claude Project with your standards document, templates, and multiple examples of good output.',
+        'Team members open the project and ask Claude to help them — the shared context ensures consistency.',
+        'Use Claude to audit existing work: "Does this meet our standards? What\'s missing or off-format?"',
+        'Save the best-performing conversations as references so new team members can see the bar immediately.',
+      ],
+      gemini: [
+        'Create a Google Doc "style guide" and use Gemini in Docs to apply it to any new content.',
+        'Build a Sheets template with Gemini-powered validation: it flags cells that don\'t meet your standards.',
+        'Use Gemini in Gmail to ensure outgoing communications match your organization\'s tone and format.',
+        'Store your templates in Google Drive and use Gemini to populate them consistently each time.',
+      ],
+      copilot: [
+        'Create Word or PowerPoint templates with Copilot instructions embedded as comments or prompt hints.',
+        'Use Copilot in Teams to standardize meeting agendas, action item logs, and follow-up formats.',
+        'Build a Copilot Studio agent that guides any team member through the process step by step.',
+        'Use Copilot to review work before it goes out: "Does this match our standard format and tone?"',
+      ],
+      perplexity: [
+        'Use Perplexity to research industry best practices and standards for this type of process.',
+        'Build your template standards based on Perplexity research, then use another AI tool to apply them.',
+        'Ask Perplexity to compare your current output against published standards in your field.',
+        'Use Perplexity to find examples of high-quality output in your domain to inform your template.',
+      ],
+      other: [
+        'Write a detailed prompt that describes exactly what good output looks like, with examples.',
+        'Ask the AI to review work against your standards, not just produce new content.',
+        'Create a shared prompt library your team uses — so everyone uses the same instructions.',
+        'Run a pilot: apply AI standardization to 10 items, review quality, then refine the prompt before scaling.',
+      ],
+    },
+  },
+
+  // ── GUIDED DECISION SUPPORT ────────────────────────────────────────────────
+  {
+    id: 'decision_support',
+    title: 'AI-Guided Decision Support',
+    desc: 'Use AI to structure information, surface relevant criteria, and prepare recommendations — so humans can make faster, better-informed decisions without having to dig for context themselves.',
+    impact: 'Faster decisions, better-documented rationale, reduced cognitive load',
+    fit: (p, t, pain) =>
+      (['review','data','gathering'].includes(p) ? 3 : 0) +
+      (['quality','knowledge','consistency'].includes(pain) ? 2 : 0) +
+      (['app','mixed'].includes(t) ? 1 : 0),
+    llmSteps: {
+      chatgpt: [
+        'Describe the decision to make and paste in all relevant context. Ask ChatGPT to structure the key factors.',
+        'Ask it to apply a consistent evaluation framework: "Rate each option against these criteria and explain."',
+        'Use it to surface trade-offs: "What are the risks and benefits of each option, given what I\'ve shared?"',
+        'Have AI prepare a decision brief for the human decision-maker — context, options, recommended path.',
+      ],
+      claude: [
+        'Paste all relevant context — background, data, constraints — and ask Claude to structure a decision framework.',
+        'Use Claude\'s nuanced reasoning to surface trade-offs and identify factors you might have overlooked.',
+        'Ask for a recommendation with reasoning: "Based on this, what would you recommend and why?"',
+        'Use a Claude Project to build up decision context over time — so each decision benefits from prior ones.',
+      ],
+      gemini: [
+        'In Google Docs, paste your decision context and ask Gemini to create a structured pros/cons or scoring matrix.',
+        'Use Gemini in Sheets to build an AI-assisted scoring tool where it evaluates each option against criteria.',
+        'In Gmail, ask Gemini to summarize email threads before a decision meeting so everyone is quickly aligned.',
+        'Connect to Google Meet transcripts and have Gemini extract the key decision points discussed.',
+      ],
+      copilot: [
+        'In Word, use Copilot to create a decision brief template and auto-fill relevant sections from context you paste in.',
+        'In Teams, ask Copilot to summarize all discussion on a topic before the decision point.',
+        'Use Copilot in Loop to create a shared decision log that Copilot helps update and structure.',
+        'In Outlook, have Copilot compile all relevant emails on a topic into a decision-ready summary.',
+      ],
+      perplexity: [
+        'Ask Perplexity to research how similar decisions have been made in your industry or domain.',
+        'Use Perplexity to find data, benchmarks, or evidence that should inform this type of decision.',
+        'Ask for a structured comparison: "What are the key factors experts consider when deciding X?"',
+        'Combine Perplexity research with your internal context for a more complete decision brief.',
+      ],
+      other: [
+        'Ask the AI to structure the decision: "Given this context, what are the key factors to weigh?"',
+        'Request a recommendation with reasoning — not just pros/cons, but a suggested path forward.',
+        'Use AI to stress-test the decision: "What could go wrong with Option A? What am I missing?"',
+        'Always have a human make the final call — AI prepares the brief, humans decide.',
+      ],
+    },
+  },
+
+  // ── CONVERSATIONAL PROCESS GUIDE ───────────────────────────────────────────
+  {
+    id: 'process_guide',
+    title: 'AI as a Step-by-Step Process Guide',
+    desc: 'Use AI to walk people through this process in real time — answering questions, providing context, and guiding each step — so the process can be done well even without a subject-matter expert present.',
+    impact: 'Institutional knowledge becomes accessible to everyone, reduces bottlenecks',
+    fit: (p, t, pain) =>
+      (['knowledge','consistency'].includes(pain) ? 3 : 0) +
+      (['communication','review','other'].includes(p) ? 2 : 0) +
+      (['mixed','meetings','app'].includes(t) ? 1 : 0),
+    llmSteps: {
+      chatgpt: [
+        'Build a Custom GPT that knows your process, answers questions about it, and guides users step by step.',
+        'Upload your process documentation, FAQs, and past examples so the GPT has full context.',
+        'Design it to ask clarifying questions before advising — so guidance is always relevant to the user\'s situation.',
+        'Share the Custom GPT link with your team — anyone can access the process guide on demand.',
+      ],
+      claude: [
+        'Create a Claude Project with all your process documentation, common questions, and worked examples.',
+        'Instruct Claude to guide users through the process interactively — asking questions before advising.',
+        'Use the project to capture new questions and answers over time, continuously improving the guide.',
+        'Encourage team members to share effective conversations back into the project as reference examples.',
+      ],
+      gemini: [
+        'Build a Gemini Gem (custom AI assistant) specifically for this process, with all documentation uploaded.',
+        'Embed the Gem in a Google Site or shared Workspace so users access it in context.',
+        'Use Google Forms + Gemini to create guided intake forms that adapt based on user responses.',
+        'Connect Gemini to your Google Drive process documentation so it always references the latest version.',
+      ],
+      copilot: [
+        'Build a Copilot Studio agent with your process logic, FAQs, and step-by-step guidance built in.',
+        'Deploy the agent in Microsoft Teams so team members can ask it questions where they work.',
+        'Use Power Automate to trigger the agent at the right moment — e.g., when a new request is submitted.',
+        'Connect the agent to your SharePoint documentation so it always gives current, accurate guidance.',
+      ],
+      perplexity: [
+        'Use Perplexity to research how others have structured and documented this type of process.',
+        'Ask Perplexity for best-practice frameworks you can adapt into your process guide.',
+        'Perplexity works best here as a research companion — pair it with a tool that allows custom instructions for the interactive guide.',
+        'Use Perplexity to keep your process documentation current by checking for industry updates regularly.',
+      ],
+      other: [
+        'Write a detailed prompt that positions the AI as a process expert: describe its role and knowledge.',
+        'Design it to ask "What step are you on?" and "What do you need help with?" before advising.',
+        'Upload or paste your process documentation into the conversation so the AI has full context.',
+        'Test it with a real user — watch where they get confused and refine the AI\'s guidance accordingly.',
+      ],
+    },
+  },
+
+  // ── COMMUNICATION AUTOMATION ────────────────────────────────────────────────
+  {
+    id: 'comm_automation',
+    title: 'Automated Communication Workflows',
+    desc: 'Use AI to handle the drafting, personalization, and structuring of repetitive outbound communications — so your team spends time on high-value conversations, not routine messaging.',
+    impact: 'Consistent messaging at scale, faster response times, less manual writing',
+    fit: (p, t, pain) =>
+      (p === 'communication' ? 3 : 0) +
+      (['email','mixed'].includes(t) ? 2 : 0) +
+      (['speed','scale','consistency'].includes(pain) ? 2 : 0),
+    llmSteps: {
+      chatgpt: [
+        'Create a library of communication templates as Custom GPT instructions, covering your most common message types.',
+        'Ask ChatGPT to personalize each message: provide the recipient context and key message, it fills in the rest.',
+        'Use it to draft follow-ups: paste the prior exchange and ask for an appropriate next message.',
+        'Build a Custom GPT your team uses to draft any outbound message consistently and quickly.',
+      ],
+      claude: [
+        'Store your communication standards and tone guidelines in a Claude Project.',
+        'Provide Claude with the recipient, context, and key points — it drafts a polished message that fits your voice.',
+        'Use Claude to review outgoing communications before they go out: "Is this on-brand and clear?"',
+        'Claude\'s nuanced understanding of tone makes it particularly effective for sensitive or nuanced messages.',
+      ],
+      gemini: [
+        'In Gmail, use Gemini\'s "Help me write" to draft outgoing emails based on a brief description.',
+        'Gemini automatically picks up context from your email thread — reducing the need to re-explain.',
+        'Use Google Workspace templates with Gemini to create personalized versions for different audiences.',
+        'Set up recurring communication drafts in Docs with Gemini-powered personalization fields.',
+      ],
+      copilot: [
+        'In Outlook, use Copilot to draft emails. Describe the message goal and it writes the full email.',
+        'Create Quick Steps in Outlook for your most common message types — Copilot drafts, you approve.',
+        'Use Copilot in Teams to draft channel updates, announcements, and follow-ups quickly.',
+        'Build a Power Automate flow that triggers a Copilot draft when a new communication request comes in.',
+      ],
+      perplexity: [
+        'Use Perplexity to research best practices for this type of communication in your industry.',
+        'Ask Perplexity for examples of high-performing communications similar to what you\'re creating.',
+        'Combine Perplexity research with a drafting tool for the most informed and polished output.',
+        'Use Perplexity to keep your messaging current — research new developments your communications should reflect.',
+      ],
+      other: [
+        'Build a master prompt for each communication type your team sends regularly.',
+        'Include the recipient, context, key points, and desired outcome in every drafting request.',
+        'Create a shared prompt library so every team member drafts communications consistently.',
+        'Establish a review step: AI drafts, human approves before sending — especially early on.',
+      ],
+    },
+  },
+
+];
+
+function buildRecommendations(processType, toolLocation, pain, llm, band) {
+  // Score each strategy
+  const scored = STRATEGIES.map(s => ({
+    ...s,
+    score: s.fit(processType, toolLocation, pain),
+  })).filter(s => s.score > 0)
+     .sort((a, b) => b.score - a.score);
+
+  // Take top 3 (or fewer if not enough)
+  const top = scored.slice(0, 3);
+
+  // Fallback if nothing matched
+  if (top.length === 0) {
+    top.push(STRATEGIES[0]); // draft_refine is always a reasonable default
+  }
+
+  // Build output objects with LLM-specific steps
+  return top.map(s => ({
+    title: s.title,
+    desc:  s.desc,
+    steps: s.llmSteps[llm] || s.llmSteps.other,
+    impact: s.impact,
+  }));
+}
+
+// ─── RESET ────────────────────────────────────────────────────────────────────
+function resetAll() {
+  scores.fill(null);
+  customActive[0] = customActive[1] = false;
+  q[1] = q[2] = q[3] = q[4] = null;
+
+  document.getElementById('processName').value   = '';
+  document.getElementById('frictionPoint').value = '';
+  document.getElementById('custom-label-0').value = '';
+  document.getElementById('custom-label-1').value = '';
+
+  document.querySelectorAll('.criterion-row').forEach(row => {
+    row.classList.remove('answered');
+    row.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+  });
+  ['custom-row-0','custom-row-1'].forEach(id => {
+    document.getElementById(id).querySelectorAll('.toggle-btn').forEach(b => b.disabled = true);
+  });
+
+  const fill = document.getElementById('barFill');
+  fill.style.width = '0%';
+  fill.className = 'bar-fill';
+  document.getElementById('scoreDisplay').innerHTML = '0 / <span id="maxScore">9</span>';
+
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('resultsActionRow').style.display = 'flex';
+  document.getElementById('automationSection').style.display = 'none';
+  document.getElementById('recOutput').style.display = 'none';
+
+  // Reset Step 3 question selections
+  document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('generateBtn').disabled = true;
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─── UTILITY ──────────────────────────────────────────────────────────────────
+function esc(str) {
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>
