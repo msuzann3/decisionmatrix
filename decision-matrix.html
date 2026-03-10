@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Should I Use AI? — Decision Matrix</title>
+<title>AI Suitability Matrix — Should I Use AI?</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -427,26 +427,11 @@
 
 <header class="app-header">
   <p class="eyebrow">Elevating AI Prompting for Results</p>
-  <h1>Should I Use <span>AI?</span></h1>
-  <p class="subtitle">A scored decision matrix to evaluate AI fit for any process</p>
+  <h1>AI Suitability <span>Matrix</span></h1>
+  <p class="subtitle">Should I Use AI? — A scored decision tool for any process</p>
 </header>
 
 <div class="container">
-
-  <!-- ══════════════════════════════════
-       STEP 1 — PROCESS IDENTIFICATION
-  ══════════════════════════════════ -->
-  <div class="card">
-    <p class="card-title">Step 1 — Identify Your Process</p>
-    <div class="field">
-      <label for="processName">Process Name</label>
-      <input type="text" id="processName" placeholder="e.g., Onboarding email sequence, Invoice approval, Training content creation" />
-    </div>
-    <div class="field">
-      <label for="frictionPoint">Where is the friction point?</label>
-      <textarea id="frictionPoint" placeholder="Describe where this process breaks down, slows down, or causes pain. What's the bottleneck or frustration?"></textarea>
-    </div>
-  </div>
 
   <!-- LIVE SCORE BAR -->
   <div class="score-bar-wrap">
@@ -458,10 +443,10 @@
   </div>
 
   <!-- ══════════════════════════════════
-       STEP 2 — SCORE EACH CRITERION
+       STEP 1 — SCORE EACH CRITERION
   ══════════════════════════════════ -->
   <div class="card">
-    <p class="card-title">Step 2 — Score Each Criterion &nbsp;·&nbsp; 1 = Yes &nbsp;·&nbsp; 0 = No</p>
+    <p class="card-title">Step 1 — Score Each Criterion &nbsp;·&nbsp; 1 = Yes &nbsp;·&nbsp; 0 = No</p>
     <div class="criteria-list" id="criteriaList">
 
       <div class="criterion-row" data-index="0">
@@ -503,8 +488,8 @@
       <div class="criterion-row" data-index="3">
         <span class="criterion-number">4</span>
         <div class="criterion-body">
-          <div class="criterion-title">Needs rapid prototyping</div>
-          <div class="criterion-hint">Speed of iteration matters — getting to a draft or first version quickly has real value</div>
+          <div class="criterion-title">Getting a quick first draft or prototype would save real time</div>
+          <div class="criterion-hint">Speed to a first version matters here — waiting on a starting point slows everything down</div>
         </div>
         <div class="toggle-group">
           <button class="toggle-btn yes" onclick="score(3, 1, this)">Yes</button>
@@ -527,8 +512,8 @@
       <div class="criterion-row" data-index="5">
         <span class="criterion-number">6</span>
         <div class="criterion-body">
-          <div class="criterion-title">AI enhances the learner or user experience</div>
-          <div class="criterion-hint">Using AI here would meaningfully improve the experience for the people this process serves</div>
+          <div class="criterion-title">The people this process serves would benefit from faster or more consistent outputs</div>
+          <div class="criterion-hint">Those on the receiving end — employees, customers, learners — would notice a meaningful improvement</div>
         </div>
         <div class="toggle-group">
           <button class="toggle-btn yes" onclick="score(5, 1, this)">Yes</button>
@@ -539,8 +524,8 @@
       <div class="criterion-row" data-index="6">
         <span class="criterion-number">7</span>
         <div class="criterion-body">
-          <div class="criterion-title">Ethical considerations are addressed</div>
-          <div class="criterion-hint">Privacy, bias, accuracy, and accountability concerns have been identified and can be managed</div>
+          <div class="criterion-title">We've reviewed the ethical risks and AI is appropriate here</div>
+          <div class="criterion-hint">Privacy, bias, data security, and accountability concerns have been considered — and using AI is appropriate for this process</div>
         </div>
         <div class="toggle-group">
           <button class="toggle-btn yes" onclick="score(6, 1, this)">Yes</button>
@@ -551,8 +536,8 @@
       <div class="criterion-row" data-index="7">
         <span class="criterion-number">8</span>
         <div class="criterion-body">
-          <div class="criterion-title">Does NOT require specialized human judgment</div>
-          <div class="criterion-hint">The task is more rule-based or pattern-driven than dependent on deep expertise or intuition</div>
+          <div class="criterion-title">Consistent rules or steps are enough — deep expertise isn't required</div>
+          <div class="criterion-hint">The task is pattern-based or rule-following enough that AI can handle it reliably without specialist intuition</div>
         </div>
         <div class="toggle-group">
           <button class="toggle-btn yes" onclick="score(7, 1, this)">Yes</button>
@@ -605,8 +590,6 @@
       <div class="result-body" id="resultBody"></div>
     </div>
 
-    <div class="result-context" id="resultContext"></div>
-
     <div class="card">
       <p class="next-steps-title">What to explore next</p>
       <ul class="next-steps-list" id="nextStepsList"></ul>
@@ -625,11 +608,21 @@
        Shown only when score >= 4
   ══════════════════════════════════ -->
   <div id="automationSection">
-    <div class="step-divider">Step 3 — Find the Right Automation</div>
+    <div class="step-divider">Step 2 — Find the Right Automation</div>
 
     <div class="card">
       <p class="card-title">Tell Us a Bit More</p>
-      <p class="section-intro">Answer four quick questions and we'll recommend specific automation approaches — matched to your process, your situation, and the AI tool you're using.</p>
+      <p class="section-intro">Answer a few quick questions and we'll recommend specific automation approaches — matched to your process, your situation, and the AI tool you're using.</p>
+
+      <!-- Process identification — collected here where it's actually used -->
+      <div class="field" style="margin-bottom:1.5rem">
+        <label for="processName">What process are we talking about?</label>
+        <input type="text" id="processName" placeholder="e.g., Onboarding email sequence, Invoice approval, Training content creation" />
+      </div>
+      <div class="field" style="margin-bottom:1.75rem">
+        <label for="frictionPoint">Where is the friction point?</label>
+        <textarea id="frictionPoint" placeholder="Describe where this process breaks down, slows down, or causes pain. What's the bottleneck or frustration?"></textarea>
+      </div>
 
       <!-- Q1: What the process involves -->
       <div class="question-block">
@@ -855,8 +848,6 @@ function updateScoreBar() {
 
 function showResults() {
   const total = getTotal(), max = getMax();
-  const pname = document.getElementById('processName').value.trim();
-  const fpt   = document.getElementById('frictionPoint').value.trim();
   let band, emoji, headline, body, nextSteps;
 
   if (total <= 3) {
@@ -895,16 +886,6 @@ function showResults() {
   document.getElementById('resultHeadline').textContent     = headline;
   document.getElementById('resultBody').textContent         = body;
 
-  const ctx = document.getElementById('resultContext');
-  if (pname || fpt) {
-    ctx.style.display = '';
-    ctx.innerHTML =
-      (pname ? '<div><strong>Process:</strong> ' + esc(pname) + '</div>' : '') +
-      (fpt   ? '<div style="margin-top:0.4rem"><strong>Friction point:</strong> ' + esc(fpt) + '</div>' : '');
-  } else {
-    ctx.style.display = 'none';
-  }
-
   document.getElementById('nextStepsList').innerHTML =
     nextSteps.map(s => '<li>' + esc(s) + '</li>').join('');
 
@@ -912,12 +893,12 @@ function showResults() {
   resultsEl.style.display = 'block';
   resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-  // Show Step 3 if score qualifies, hide otherwise
-  const auto = document.getElementById('automationSection');
+  // Show Step 2 (Automation Explorer) if score qualifies
+  const auto   = document.getElementById('automationSection');
   const actRow = document.getElementById('resultsActionRow');
   if (total >= 4) {
     auto.style.display = 'block';
-    actRow.style.display = 'none'; // action buttons live in Step 3 instead
+    actRow.style.display = 'none';
   } else {
     auto.style.display = 'none';
     actRow.style.display = 'flex';
